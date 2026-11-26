@@ -6,50 +6,85 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Protótipo SAJ6 – Acesso</title>
 <style>
-  :root{ --azul-topo:#03508D; --azul:#0072CC; --azul-escuro:#004C87; --fundo:#F3F4F6;
-    --txt:#1F2328; --txt2:#57606A; --borda:#D0D7DE; --erro:#D32F2F;
-    --fonte:"Segoe UI","Selawik","Tahoma","Verdana","Arial",sans-serif; }
+  /* Bayon Design System (@bayon/commons 6.0.12): tokens, Input, Button e mensagem de erro
+     medidos nos componentes reais. Canto reto, sombra só de contorno, uma família tipográfica. */
+  @font-face{font-family:"Selawik";src:url("fontes/selawksl.woff2") format("woff2");font-weight:300;font-display:swap}
+  @font-face{font-family:"Selawik";src:url("fontes/selawk.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Selawik";src:url("fontes/selawksb.woff2") format("woff2");font-weight:600;font-display:swap}
+  @font-face{font-family:"Selawik";src:url("fontes/selawkb.woff2") format("woff2");font-weight:700;font-display:swap}
+  :root{
+    --themeDarker:#03508D; --themeDark:#0063B1; --themePrimary:#0072cc; --primaryClick:#005292;
+    --neutralPrimary:#333333; --neutralSecondary:#4D4D4D; --neutralSecondaryAlt:#6c6c6c; --neutralTertiary:#A6A6A6;
+    --defaultDark:#C5C5C5; --neutralLight:#F4F4F4; --white:#FFFFFF; --danger:#E81123; --focus:#0078D7;
+    --shadow-hairline:0 0 2px rgba(77,77,77,.28);
+    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px;
+    --font-sans:"Segoe UI","Selawik","Tahoma","Verdana","Arial",sans-serif;
+  }
   *{box-sizing:border-box}
   html,body{margin:0;min-height:100%}
-  body{font-family:var(--fonte);color:var(--txt);background:var(--fundo);font-size:14px;
+  body{font-family:var(--font-sans);color:var(--neutralPrimary);background:var(--neutralLight);font-size:14px;line-height:1.4;
     display:flex;flex-direction:column;min-height:100vh}
-  .topo{height:48px;background:var(--azul-topo);color:#fff;display:flex;align-items:center;padding:0 16px;
-    font-weight:700;font-size:17px}
-  main{flex:1;display:grid;place-items:center;padding:24px 16px}
-  .cartao{width:100%;max-width:380px;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:28px 24px;
-    box-shadow:0 1px 3px rgba(0,0,0,.06)}
-  h1{font-size:20px;margin:0 0 4px}
-  .sub{color:var(--txt2);margin:0 0 20px;line-height:1.4}
-  label{display:block;font-weight:600;margin:14px 0 6px}
-  input{width:100%;padding:9px 10px;font:inherit;border:1px solid var(--borda);border-radius:6px;background:#fff;color:var(--txt)}
-  input:focus{outline:2px solid #98C8EF;outline-offset:0;border-color:var(--azul)}
-  input[aria-invalid="true"]{border-color:var(--erro)}
-  .erro{color:var(--erro);font-size:13px;margin:6px 0 0;min-height:1em}
-  button{margin-top:20px;width:100%;padding:10px;font:inherit;font-weight:600;color:#fff;background:var(--azul);
-    border:0;border-radius:6px;cursor:pointer}
-  button:hover{background:var(--azul-escuro)}
-  button[disabled]{opacity:.7;cursor:progress}
-  .rodape{color:var(--txt2);font-size:12px;text-align:center;margin-top:16px}
-  noscript{display:block;margin-top:12px;color:var(--erro)}
+  svg{fill:currentColor}
+
+  /* Header do produto: 48px em themeDarker */
+  .topo{height:48px;flex:none;background:var(--themeDarker);color:var(--white);display:flex;align-items:center;padding:0 var(--space-4)}
+  .topo .marca{font-weight:700;font-size:17px;padding-right:var(--space-4);border-right:1px solid rgba(255,255,255,.35)}
+  .topo .titulo{font-weight:600;font-size:17px;padding-left:var(--space-4)}
+
+  main{flex:1;display:grid;place-items:center;padding:var(--space-5) var(--space-4)}
+  .cartao{width:100%;max-width:360px;background:var(--white);border-radius:0;box-shadow:var(--shadow-hairline);padding:var(--space-5)}
+  h1{font-size:18px;font-weight:600;margin:0 0 var(--space-1)}
+  .sub{color:var(--neutralSecondaryAlt);margin:0 0 var(--space-5)}
+
+  /* Input: rótulo 14px neutralSecondaryAlt; campo 32px, borda neutralSecondaryAlt, padding 8px */
+  .campo + .campo{margin-top:var(--space-4)}
+  label{display:block;color:var(--neutralSecondaryAlt);margin-bottom:6px}
+  input{display:block;width:100%;height:32px;padding:0 var(--space-2);font:inherit;color:var(--neutralPrimary);background:var(--white);
+    border:1px solid var(--neutralSecondaryAlt);border-radius:0;outline:0}
+  input::placeholder{color:var(--neutralTertiary);opacity:1}
+  input:hover{border-color:var(--neutralPrimary)}
+  input:focus{border-color:var(--themePrimary);box-shadow:inset 0 0 0 1px var(--themePrimary)}
+  input[aria-invalid="true"]{border-color:var(--danger)}
+  input[aria-invalid="true"]:focus{box-shadow:inset 0 0 0 1px var(--danger)}
+
+  /* Mensagem de erro do Input: ícone 14px + 10px + texto 14px em danger, 4px abaixo do campo */
+  .erro{display:flex;align-items:flex-start;gap:10px;color:var(--danger);margin:var(--space-1) 0 0}
+  .erro svg{width:14px;height:14px;flex:none;margin-top:3px}
+  .erro:has(span:empty){display:none}
+
+  /* Button contained primary: 32px, 14px semibold, padding 16px, canto reto, sem caixa-alta */
+  button{display:block;margin-top:var(--space-5);width:100%;height:32px;padding:0 var(--space-4);font:inherit;font-weight:600;
+    color:var(--white);background:var(--themePrimary);border:0;border-radius:0;text-transform:none;cursor:pointer}
+  button:hover{background:var(--themeDark)}
+  button:active{background:var(--primaryClick)}
+  button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  button[disabled]{background:var(--defaultDark);color:var(--neutralSecondary);cursor:progress}
+
+  .rodape{color:var(--neutralSecondaryAlt);font-size:12px;margin:var(--space-3) 0 0}
+  noscript{display:block;margin-top:var(--space-3);color:var(--danger)}
 </style>
 </head>
 <body>
-<div class="topo">SAJ6 · Protótipo</div>
+<header class="topo"><span class="marca">SAJ</span><span class="titulo">Protótipo</span></header>
 <main>
   <form class="cartao" id="form" novalidate>
     <h1>Acesso restrito</h1>
-    <p class="sub">Protótipo restrito. Entre com seu e-mail da Softplan ou do Ministério Público e a senha do protótipo.</p>
+    <p class="sub">Informe o e-mail da Softplan ou do Ministério Público e a senha do protótipo.</p>
 
-    <label for="email">E-mail</label>
-    <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br ou nome@mp[UF].mp.br" required>
-    <p class="erro" id="erro-email" role="alert"></p>
+    <div class="campo">
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br ou nome@mp[UF].mp.br" required aria-describedby="erro-email">
+      <p class="erro"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M17 23.5h-2.1V12.8H17zm0-12.9h-2.1V8.5H17z"/><path d="M16 0a16 16 0 1 1 0 32 16 16 0 0 1 0-32m0 30a14 14 0 1 0 0-28 14 14 0 0 0 0 28"/></svg><span id="erro-email" role="alert"></span></p>
+    </div>
 
-    <label for="senha">Senha</label>
-    <input id="senha" name="senha" type="password" autocomplete="current-password" required>
-    <p class="erro" id="erro-senha" role="alert"></p>
+    <div class="campo">
+      <label for="senha">Senha</label>
+      <input id="senha" name="senha" type="password" autocomplete="current-password" required aria-describedby="erro-senha">
+      <p class="erro"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M17 23.5h-2.1V12.8H17zm0-12.9h-2.1V8.5H17z"/><path d="M16 0a16 16 0 1 1 0 32 16 16 0 0 1 0-32m0 30a14 14 0 1 0 0-28 14 14 0 0 0 0 28"/></svg><span id="erro-senha" role="alert"></span></p>
+    </div>
 
-    <button type="submit" id="entrar">Entrar</button>
-    <p class="rodape">Não tem a senha? Peça a quem compartilhou o protótipo.</p>
+    <button type="submit" id="entrar">Entrar no protótipo</button>
+    <p class="rodape">Sem a senha, solicitar a quem compartilhou o protótipo.</p>
     <noscript>Ative o JavaScript para acessar o protótipo.</noscript>
   </form>
 </main>
@@ -107,7 +142,7 @@
     $('senha').removeAttribute('aria-invalid');
 
     if (!DOMINIO.test(email)) {
-      $('erro-email').textContent = 'Use seu e-mail @softplan.com.br ou do Ministério Público (@mp[UF].mp.br).';
+      $('erro-email').textContent = 'Informe um e-mail @softplan.com.br ou @mp[UF].mp.br.';
       $('email').setAttribute('aria-invalid', 'true');
       $('email').focus();
       return;
@@ -131,16 +166,16 @@
       } catch (_) {}
       mostrar(html);
     } catch (_) {
-      $('erro-senha').textContent = 'Senha incorreta.';
+      $('erro-senha').textContent = 'Senha incorreta. Confira a senha recebida.';
       $('senha').setAttribute('aria-invalid', 'true');
       $('senha').select();
       botao.disabled = false;
-      botao.textContent = 'Entrar';
+      botao.textContent = 'Entrar no protótipo';
     }
   });
 
   if (!PACOTE || !window.crypto || !crypto.subtle) {
-    $('erro-senha').textContent = 'Este navegador não consegue abrir o protótipo. Use um navegador atualizado.';
+    $('erro-senha').textContent = 'Navegador sem suporte. Abrir o protótipo em um navegador atualizado.';
     $('entrar').disabled = true;
     return;
   }

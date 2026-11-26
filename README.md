@@ -12,6 +12,12 @@ sem a senha, o código publicado não mostra o conteúdo. Depois de entrar, reca
 a aba pede. O e-mail só confere o domínio (a lista de UFs está em `ferramentas/login.template.html`); não há cadastro
 de usuários.
 
+## Design system
+
+A tela de login segue o **Bayon Design System** (`@bayon/commons` 6.0.12): tokens de cor e espaçamento, Input e
+Button medidos nos componentes reais, canto reto e sombra só de contorno. A fonte é a Segoe UI no Windows e, fora
+dele, a **Selawik** (`fontes/`, SIL OFL 1.1), clone métrico da Segoe UI que o próprio Bayon declara como fallback.
+
 ## Como atualizar o protótipo
 
 O conteúdo sem cifra (HTML, prints, patch e a documentação completa) fica só na máquina de quem edita, em `_fonte/`
