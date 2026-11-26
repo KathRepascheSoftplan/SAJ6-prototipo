@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Protótipo SAJ6 – Acesso</title>
+<style>
+  :root{ --azul-topo:#03508D; --azul:#0072CC; --azul-escuro:#004C87; --fundo:#F3F4F6;
+    --txt:#1F2328; --txt2:#57606A; --borda:#D0D7DE; --erro:#D32F2F;
+    --fonte:"Segoe UI","Selawik","Tahoma","Verdana","Arial",sans-serif; }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{font-family:var(--fonte);color:var(--txt);background:var(--fundo);font-size:14px;
+    display:flex;flex-direction:column;min-height:100vh}
+  .topo{height:48px;background:var(--azul-topo);color:#fff;display:flex;align-items:center;padding:0 16px;
+    font-weight:700;font-size:17px}
+  main{flex:1;display:grid;place-items:center;padding:24px 16px}
+  .cartao{width:100%;max-width:380px;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:28px 24px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--txt2);margin:0 0 20px;line-height:1.4}
+  label{display:block;font-weight:600;margin:14px 0 6px}
+  input{width:100%;padding:9px 10px;font:inherit;border:1px solid var(--borda);border-radius:6px;background:#fff;color:var(--txt)}
+  input:focus{outline:2px solid #98C8EF;outline-offset:0;border-color:var(--azul)}
+  input[aria-invalid="true"]{border-color:var(--erro)}
+  .erro{color:var(--erro);font-size:13px;margin:6px 0 0;min-height:1em}
+  button{margin-top:20px;width:100%;padding:10px;font:inherit;font-weight:600;color:#fff;background:var(--azul);
+    border:0;border-radius:6px;cursor:pointer}
+  button:hover{background:var(--azul-escuro)}
+  button[disabled]{opacity:.7;cursor:progress}
+  .rodape{color:var(--txt2);font-size:12px;text-align:center;margin-top:16px}
+  noscript{display:block;margin-top:12px;color:var(--erro)}
+</style>
+</head>
+<body>
+<div class="topo">SAJ6 · Protótipo</div>
+<main>
+  <form class="cartao" id="form" novalidate>
+    <h1>Acesso restrito</h1>
+    <p class="sub">Protótipo interno da Softplan. Entre com seu e-mail corporativo e a senha do protótipo.</p>
+
+    <label for="email">E-mail</label>
+    <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br" required>
+    <p class="erro" id="erro-email" role="alert"></p>
+
+    <label for="senha">Senha</label>
+    <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+    <p class="erro" id="erro-senha" role="alert"></p>
+
+    <button type="submit" id="entrar">Entrar</button>
+    <p class="rodape">Não tem a senha? Peça a quem compartilhou o protótipo.</p>
+    <noscript>Ative o JavaScript para acessar o protótipo.</noscript>
+  </form>
+</main>
+<script>
+(() => {
+  const PACOTE = /*__PACOTE__*/null;
+  const CHAVE_SESSAO = 'saj6-prototipo-acesso';
+  const DOMINIO = /^[^\s@]+@softplan\.com\.br$/i;
+
+  const $ = (id) => document.getElementById(id);
+  const deB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const paraB64 = (u8) => btoa(String.fromCharCode(...u8));
+
+  async function chaveDaSenha(senha) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(senha), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: deB64(PACOTE.sal), iterations: PACOTE.it, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, true, ['decrypt']);
+  }
+
+  async function abrir(chave) {
+    const claro = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: deB64(PACOTE.iv) }, chave, deB64(PACOTE.dados));
+    return new TextDecoder().decode(claro);
+  }
+
+  function mostrar(html) {
+    document.open();
+    document.write(html);
+    document.close();
+  }
+
+  // Mantém o acesso enquanto a aba estiver aberta (recarregar não pede login de novo).
+  async function tentarSessao() {
+    let bruta = null;
+    try { bruta = sessionStorage.getItem(CHAVE_SESSAO); } catch (_) { return; }
+    if (!bruta) return;
+    try {
+      const chave = await crypto.subtle.importKey('raw', deB64(bruta), 'AES-GCM', false, ['decrypt']);
+      mostrar(await abrir(chave));
+    } catch (_) {
+      try { sessionStorage.removeItem(CHAVE_SESSAO); } catch (__) {}
+    }
+  }
+
+  $('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = $('email').value.trim();
+    const senha = $('senha').value;
+    $('erro-email').textContent = '';
+    $('erro-senha').textContent = '';
+    $('email').removeAttribute('aria-invalid');
+    $('senha').removeAttribute('aria-invalid');
+
+    if (!DOMINIO.test(email)) {
+      $('erro-email').textContent = 'Use seu e-mail @softplan.com.br.';
+      $('email').setAttribute('aria-invalid', 'true');
+      $('email').focus();
+      return;
+    }
+    if (!senha) {
+      $('erro-senha').textContent = 'Informe a senha.';
+      $('senha').setAttribute('aria-invalid', 'true');
+      $('senha').focus();
+      return;
+    }
+
+    const botao = $('entrar');
+    botao.disabled = true;
+    botao.textContent = 'Verificando…';
+    try {
+      const chave = await chaveDaSenha(senha);
+      const html = await abrir(chave);
+      try {
+        const bruta = new Uint8Array(await crypto.subtle.exportKey('raw', chave));
+        sessionStorage.setItem(CHAVE_SESSAO, paraB64(bruta));
+      } catch (_) {}
+      mostrar(html);
+    } catch (_) {
+      $('erro-senha').textContent = 'Senha incorreta.';
+      $('senha').setAttribute('aria-invalid', 'true');
+      $('senha').select();
+      botao.disabled = false;
+      botao.textContent = 'Entrar';
+    }
+  });
+
+  if (!PACOTE || !window.crypto || !crypto.subtle) {
+    $('erro-senha').textContent = 'Este navegador não consegue abrir o protótipo. Use um navegador atualizado.';
+    $('entrar').disabled = true;
+    return;
+  }
+  // Depois do load: durante o carregamento o document.open() da troca de página é ignorado.
+  if (document.readyState === 'complete') tentarSessao();
+  else window.addEventListener('load', tentarSessao, { once: true });
+})();
+</script>
+</body>
+</html>

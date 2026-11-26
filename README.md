@@ -1,0 +1,25 @@
+# Protótipo SAJ6
+
+Protótipo interno da Softplan, de acesso restrito.
+
+## Como abrir
+
+Acesse a URL do GitHub Pages do repositório e entre com seu **e-mail `@softplan.com.br` e a senha do protótipo**. Peça a
+senha a quem compartilhou o link.
+
+O protótipo está cifrado dentro da página (AES-256-GCM, chave derivada da senha com PBKDF2-SHA256, 600 mil iterações):
+sem a senha, o código publicado não mostra o conteúdo. Depois de entrar, recarregar a aba não pede login de novo; fechar
+a aba pede. O e-mail só confere o domínio; não há cadastro de usuários.
+
+## Como atualizar o protótipo
+
+O conteúdo sem cifra (HTML, prints, patch e a documentação completa) fica só na máquina de quem edita, em `_fonte/`
+(ignorada pelo Git). Nada dessa pasta pode ser publicado.
+
+1. Edite `_fonte/index.html`.
+2. Gere a página publicada: `node ferramentas/cifrar.mjs` (lê a senha de `%USERPROFILE%\SAJ6-prototipo-senha.txt` ou da
+   variável `PROTOTIPO_SENHA`).
+3. Faça commit do `index.html` gerado.
+
+Para trocar a senha, mude o arquivo da senha (mínimo 12 caracteres), rode o passo 2 e publique. A senha antiga deixa de
+abrir a versão nova.
