@@ -38,10 +38,10 @@
 <main>
   <form class="cartao" id="form" novalidate>
     <h1>Acesso restrito</h1>
-    <p class="sub">Protótipo interno da Softplan. Entre com seu e-mail corporativo e a senha do protótipo.</p>
+    <p class="sub">Protótipo restrito. Entre com seu e-mail da Softplan ou do Ministério Público e a senha do protótipo.</p>
 
     <label for="email">E-mail</label>
-    <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br" required>
+    <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br ou nome@mpce.mp.br" required>
     <p class="erro" id="erro-email" role="alert"></p>
 
     <label for="senha">Senha</label>
@@ -57,7 +57,9 @@
 (() => {
   const PACOTE = /*__PACOTE__*/null;
   const CHAVE_SESSAO = 'saj6-prototipo-acesso';
-  const DOMINIO = /^[^\s@]+@softplan\.com\.br$/i;
+  // Softplan ou Ministério Público estadual: @mp<UF>.mp.br (ex.: mpce.mp.br).
+  const UFS = 'ac|al|ap|am|ba|ce|df|es|go|ma|mt|ms|mg|pa|pb|pr|pe|pi|rj|rn|rs|ro|rr|sc|sp|se|to';
+  const DOMINIO = new RegExp('^[^\\s@]+@(softplan\\.com\\.br|mp(' + UFS + ')\\.mp\\.br)$', 'i');
 
   const $ = (id) => document.getElementById(id);
   const deB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
@@ -104,7 +106,7 @@
     $('senha').removeAttribute('aria-invalid');
 
     if (!DOMINIO.test(email)) {
-      $('erro-email').textContent = 'Use seu e-mail @softplan.com.br.';
+      $('erro-email').textContent = 'Use seu e-mail @softplan.com.br ou do Ministério Público (@mp<UF>.mp.br).';
       $('email').setAttribute('aria-invalid', 'true');
       $('email').focus();
       return;
