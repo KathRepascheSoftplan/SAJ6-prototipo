@@ -41,7 +41,7 @@
     <p class="sub">Protótipo restrito. Entre com seu e-mail da Softplan ou do Ministério Público e a senha do protótipo.</p>
 
     <label for="email">E-mail</label>
-    <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br ou nome@mpce.mp.br" required>
+    <input id="email" name="email" type="email" autocomplete="username" placeholder="nome@softplan.com.br ou nome@mp[UF].mp.br" required>
     <p class="erro" id="erro-email" role="alert"></p>
 
     <label for="senha">Senha</label>
@@ -57,8 +57,9 @@
 (() => {
   const PACOTE = /*__PACOTE__*/null;
   const CHAVE_SESSAO = 'saj6-prototipo-acesso';
-  // Softplan ou Ministério Público estadual: @mp<UF>.mp.br (ex.: mpce.mp.br).
-  const UFS = 'ac|al|ap|am|ba|ce|df|es|go|ma|mt|ms|mg|pa|pb|pr|pe|pi|rj|rn|rs|ro|rr|sc|sp|se|to';
+  // Softplan ou Ministério Público de qualquer UF: @mp<UF>.mp.br (ex.: mpce.mp.br).
+  // O MP do Distrito Federal usa mpdft.mp.br, por isso o "dft" além do "df".
+  const UFS = 'ac|al|ap|am|ba|ce|df|dft|es|go|ma|mt|ms|mg|pa|pb|pr|pe|pi|rj|rn|rs|ro|rr|sc|sp|se|to';
   const DOMINIO = new RegExp('^[^\\s@]+@(softplan\\.com\\.br|mp(' + UFS + ')\\.mp\\.br)$', 'i');
 
   const $ = (id) => document.getElementById(id);
@@ -106,7 +107,7 @@
     $('senha').removeAttribute('aria-invalid');
 
     if (!DOMINIO.test(email)) {
-      $('erro-email').textContent = 'Use seu e-mail @softplan.com.br ou do Ministério Público (@mp<UF>.mp.br).';
+      $('erro-email').textContent = 'Use seu e-mail @softplan.com.br ou do Ministério Público (@mp[UF].mp.br).';
       $('email').setAttribute('aria-invalid', 'true');
       $('email').focus();
       return;

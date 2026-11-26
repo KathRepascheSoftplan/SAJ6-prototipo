@@ -5,7 +5,7 @@ Protótipo interno da Softplan, de acesso restrito.
 ## Como abrir
 
 Acesse a URL do GitHub Pages do repositório e entre com seu **e-mail `@softplan.com.br` ou de um Ministério Público
-estadual (`@mp<UF>.mp.br`, como `@mpce.mp.br`) e a senha do protótipo**. Peça a senha a quem compartilhou o link.
+de qualquer UF (`@mp[UF].mp.br`, como `@mpce.mp.br`; o DF usa `@mpdft.mp.br`) e a senha do protótipo**. Peça a senha a quem compartilhou o link.
 
 O protótipo está cifrado dentro da página (AES-256-GCM, chave derivada da senha com PBKDF2-SHA256, 600 mil iterações):
 sem a senha, o código publicado não mostra o conteúdo. Depois de entrar, recarregar a aba não pede login de novo; fechar
