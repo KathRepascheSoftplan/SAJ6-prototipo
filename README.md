@@ -12,6 +12,14 @@ sem a senha, o código publicado não mostra o conteúdo. Depois de entrar, reca
 a aba pede. O e-mail só confere o domínio (a lista de UFs está em `ferramentas/login.template.html`); não há cadastro
 de usuários.
 
+## O que o protótipo simula
+
+Painel de Tarefas (visão clássica) com dados fictícios. O menu lateral reproduz o do Painel Judicial: abas A Fazer,
+Aguardando e Finalizadas; organizadores e etiquetas que filtram a lista (com o estado "filtrado" quando os dois estão
+ativos); grupos recolhíveis; menu recolhido em 44px com cópia flutuante no hover; pesquisar, reordenar e filtrar por
+múltiplas etiquetas; criar e editar etiqueta; editar a visão dos responsáveis; menu do sistema (☰) e Minha conta.
+Nada é gravado: tudo volta ao estado inicial ao recarregar, menos o menu recolhido e os grupos abertos.
+
 ## Design system
 
 A tela de login segue o **Bayon Design System** (`@bayon/commons` 6.0.12): tokens de cor e espaçamento, Input e
